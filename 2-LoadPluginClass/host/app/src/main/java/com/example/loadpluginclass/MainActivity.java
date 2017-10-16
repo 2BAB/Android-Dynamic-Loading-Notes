@@ -34,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private void loadPluginClassTest() {
         try {
             Class libProviderClazz = dexClassLoader.loadClass("com.example.loadpluginclass.PluginClassWillBeLoad");
+            System.out.println("PluginClassWillBeLoad getClassloader:" + libProviderClazz.getClassLoader());
+            System.out.println("LoadPluginClassTestInterface getClassloader:" + LoadPluginClassTestInterface.class.getClassLoader());
+
             LoadPluginClassTestInterface dexInterface = (LoadPluginClassTestInterface) libProviderClazz.newInstance();
             Toast.makeText(this, dexInterface.getPiValue() + "", Toast.LENGTH_LONG).show();
         } catch (Exception e) {

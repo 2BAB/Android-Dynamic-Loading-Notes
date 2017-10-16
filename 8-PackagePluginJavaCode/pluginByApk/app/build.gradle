@@ -1,0 +1,103 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.example.multiclassloader"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+}
+
+
+
+
+
+////////////////////////////////// Class Filter ///////////////////////////////////////
+
+import com.android.build.api.transform.*
+import com.android.build.gradle.internal.pipeline.TransformManager
+import groovy.io.FileType
+import org.apache.commons.io.FileUtils
+
+class StripClassAndResTransform extends Transform {
+
+    private Project project
+
+    StripClassAndResTransform(Project project) {
+        this.project = project
+    }
+
+    @Override
+    String getName() {
+        return 'stripClassAndRes'
+    }
+
+    @Override
+    Set<QualifiedContent.ContentType> getInputTypes() {
+        return TransformManager.CONTENT_JARS
+    }
+
+    @Override
+    Set<QualifiedContent.Scope> getScopes() {
+        return TransformManager.SCOPE_FULL_PROJECT
+    }
+
+    @Override
+    boolean isIncremental() {
+        return false
+    }
+
+    @Override
+    void transform(final TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
+
+        def applicationId = 'com/example/multiclassloader'
+
+
+        if (!isIncremental()) {
+            transformInvocation.outputProvider.deleteAll()
+        }
+
+        transformInvocation.inputs.each {
+            it.directoryInputs.each { directoryInput ->
+                directoryInput.file.traverse (type: FileType.FILES){
+                    def entryName = it.path.substring(directoryInput.file.path.length() + 1)
+                    def destName = directoryInput.name + '/' + entryName
+                    def dest = transformInvocation.outputProvider.getContentLocation(
+                            destName, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
+                    // check whether it is a bundle-file
+                    if (entryName.contains(applicationId)) {
+                        FileUtils.copyFile(it, dest)
+                    }
+                }
+            }
+
+            it.jarInputs.each { jarInput ->
+                // we don't need libs currently
+//                Set<String> jarEntries = HostClassAndResCollector.unzipJar(jarInput.file)
+//                if (!stripEntries.containsAll(jarEntries)){
+//                    def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name,
+//                            jarInput.contentTypes, jarInput.scopes, Format.JAR)
+//                    FileUtils.copyFile(jarInput.file, dest)
+//                }
+            }
+        }
+    }
+}
+
+project.android.registerTransform(new StripClassAndResTransform(project))
