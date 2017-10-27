@@ -27,7 +27,7 @@ public class MyApplication extends Application {
     }
 
     private void installDex() {
-        File optimizedDexOutputPath = new File("/system/dex/" + "4-Plugin.apk");// 外部路径
+        File optimizedDexOutputPath = new File("/sdcard/dex/" + "4-Plugin.apk");// 外部路径
         File dexOutputDir = this.getDir("dex", 0);// 无法直接从外部路径加载.dex文件，需要指定APP内部路径作为缓存目录（.dex文件会被解压到此目录）
         dexClassLoader = new DexClassLoader(
                 optimizedDexOutputPath.getAbsolutePath(),

@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Handler handler = new Handler();
-        handler.postDelayed(goToPluginActivity, 3000);
+        handler.postDelayed(goToPluginActivity, 1500);
     }
 
     Runnable goToPluginActivity = new Runnable() {

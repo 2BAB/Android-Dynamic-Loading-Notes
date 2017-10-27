@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             return pluginR;
         }
         try {
-            String dexPath = "/system/dex/" + "4-Plugin.apk";
+            String dexPath = "/sdcard/dex/" + "4-Plugin.apk";
             AssetManager assetManager = AssetManager.class.newInstance();
             Method addAssetPath = assetManager.getClass().getMethod("addAssetPath", String.class);
             addAssetPath.invoke(assetManager, dexPath);
