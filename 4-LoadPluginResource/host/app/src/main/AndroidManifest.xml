@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.plugin4.MainActivity">
+        <activity android:name="com.example.plugin4.MainActivity"
+            android:theme="@style/Theme.AppCompat">
 
         </activity>
     </application>
